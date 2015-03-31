@@ -3,7 +3,6 @@
 var express = require('express')
   , fs = require('fs-extra')
   , path = require('path')
-  , mime = require('mime')
   , spawn = require('child_process').spawn
   , NginxConf = require('nginx-json');
 
@@ -15,6 +14,9 @@ module.exports = exports = function(options) {
 
   app.use(require('body-parser').json());
   app.use(require('body-parser').text());
+
+  if (process.env.NODE_ENV != 'production')
+    app.use(require('morgan')('dev'));
 
   // Basic auth
 
