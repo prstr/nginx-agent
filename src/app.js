@@ -24,14 +24,19 @@ module.exports = exports = function(options) {
   });
 
   app.get('/tenants/:id', function(req, res, next) {
-    req.url = req.url.replace('\/$', '') + '/nginx.conf';
-    next();
+    var file = path.join(root, 'tenants', req.params.id + '.conf');
+    fs.readFile(file, 'utf-8', function(err, text) {
+      /* istanbul ignore if */
+      if (err) return res.sendStatus(404);
+      res.type('text');
+      res.end(text);
+    })
   });
 
   app.post('/tenants/:id', function(req, res, next) {
     if (!req.is('json'))
       return res.sendStatus(406);
-    var file = path.join(root, 'tenants', req.params.id, 'nginx.conf');
+    var file = path.join(root, 'tenants', req.params.id + '.conf');
     var conf = new NginxConf(req.body);
     fs.outputFile(file, conf.toString(), 'utf-8', function(err) {
       /* istanbul ignore if */
@@ -41,41 +46,8 @@ module.exports = exports = function(options) {
   });
 
   app.delete('/tenants/:id', function(req, res, next) {
-    var file = path.join(root, 'tenants', req.params.id);
+    var file = path.join(root, 'tenants', req.params.id + '.conf');
     fs.remove(file, function(err) {
-      /* istanbul ignore if */
-      if (err) return next(err);
-      res.sendStatus(200);
-    });
-  });
-
-  // Files mgmt API
-
-  app.all('/tenants/:id/*', function(req, res, next) {
-    res.locals.file = path.join(root, 'tenants', req.params.id, req.params[1]);
-    next();
-  });
-
-  app.get('/tenants/:id/*', function(req, res, next) {
-    fs.readFile(res.locals.file, 'utf-8', function(err, text) {
-      /* istanbul ignore if */
-      if (err) return res.sendStatus(404);
-      res.type(mime.lookup(file));
-      res.end(text);
-    });
-  });
-
-  app.post('/tenants/:id/*', function(req, res, next) {
-    req.pipe(fs.createWriteStream(res.locals.file));
-    req.on('end', function(err) {
-      /* istanbul ignore if */
-      if (err) return next(err);
-      res.sendStatus(200);
-    });
-  });
-
-  app.delete('/tenants/:id/*', function(req, res, next) {
-    fs.remove(res.locals.file, function(err) {
       /* istanbul ignore if */
       if (err) return next(err);
       res.sendStatus(200);

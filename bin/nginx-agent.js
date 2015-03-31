@@ -22,15 +22,3 @@ var app = require('../src/app')(options);
 http.createServer(app).listen(options.port, options.ip, function() {
   console.log('Listening on %s:%s', options.ip, options.port);
 });
-
-// Bootstrap current dir with default `nginx.conf`
-
-var rootConf = new NginxConf({ 'include': 'tenants/*/nginx.conf' })
-  , rootConfFile = path.join(process.cwd(), 'nginx.conf');
-
-fs.writeFile(rootConfFile, rootConf.toString(), 'utf-8', function(err) {
-  if (err)
-    console.error('Could not write to %s', rootConfFile);
-  else
-    console.log('Written root conf to %s', rootConfFile);
-});

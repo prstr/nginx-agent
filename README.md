@@ -29,17 +29,14 @@ be run with `sudo`.
    nginx-agent
    ```
    
-4. It will create `nginx.conf` there:
+4. Hook up tenants configuration into your main `nginx.conf`:
 
    ```
-   include tenants/*/nginx.conf
+   include myapp/tenants/*.conf;
    ```
 
-5. Hook up this configuration into your main `nginx.conf`:
-
-   ```
-   include /etc/nginx/conf/myapp/nginx.conf;
-   ```
+Tenants configurations submitted via API will be stored in
+`<root>/tenants/<tenantId>.conf`.
 
 ## REST API
 
