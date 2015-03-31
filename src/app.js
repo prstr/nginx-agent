@@ -15,6 +15,18 @@ module.exports = exports = function(options) {
 
   app.use(require('body-parser').json());
 
+  // Basic auth
+
+  if (options.password)
+    app.use(function(req, res, next) {
+      var credentials = require('basic-auth')(req);
+      if (!credentials || credentials.pass != options.password) {
+        res.set('WWW-Authenticate', 'Basic');
+        return res.end();
+      }
+      next();
+    });
+
   // Basic tenants mgmt
 
   app.get('/tenants', function(req, res, next) {

@@ -12,7 +12,8 @@
     "nginx-json": "*",
     "extend": "*",
     "mime": "*",
-    "fs-extra": "*"
+    "fs-extra": "*",
+    "basic-auth": "*"
   },
   "repository": {
     "type": "git",

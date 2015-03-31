@@ -4,8 +4,7 @@
 var path = require('path')
   , extend = require('extend')
   , fs = require('fs-extra')
-  , http = require('http')
-  , NginxConf = require('nginx-json');
+  , http = require('http');
 
 var options = {
   port: 7390,
