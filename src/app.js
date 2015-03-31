@@ -14,6 +14,7 @@ module.exports = exports = function(options) {
     , root = options.root || process.cwd();
 
   app.use(require('body-parser').json());
+  app.use(require('body-parser').text());
 
   // Basic auth
 
@@ -21,6 +22,7 @@ module.exports = exports = function(options) {
     app.use(function(req, res, next) {
       var credentials = require('basic-auth')(req);
       if (!credentials || credentials.pass != options.password) {
+        res.status(401);
         res.set('WWW-Authenticate', 'Basic');
         return res.end();
       }
@@ -46,10 +48,10 @@ module.exports = exports = function(options) {
   });
 
   app.post('/tenants/:id', function(req, res, next) {
-    if (!req.is('json'))
-      return res.sendStatus(406);
     var file = path.join(root, 'tenants', req.params.id + '.conf');
-    var conf = new NginxConf(req.body);
+    var conf = req.is('json') ?
+      new NginxConf(req.body).toString() :
+      req.body;
     fs.outputFile(file, conf.toString(), 'utf-8', function(err) {
       /* istanbul ignore if */
       if (err) return next(err);
