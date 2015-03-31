@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "description": "Manage multi-tenant Nginx configuration",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dependencies": {
+    "express": "4.x.x",
+    "body-parser": "*",
+    "nginx-json": "*",
+    "extend": "*",
+    "mime": "*",
+    "fs-extra": "*"
   },
   "repository": {
     "type": "git",

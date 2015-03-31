@@ -32,7 +32,7 @@ be run with `sudo`.
 4. It will create `nginx.conf` there:
 
    ```
-   include tenants/*.conf
+   include tenants/*/nginx.conf
    ```
 
 5. Hook up this configuration into your main `nginx.conf`:
@@ -67,6 +67,21 @@ Issues `nginx reload` command and returns its result.
 Note: Nginx Agent must be run under `sudo` in order for this to work.
 If you'd rather not to sudo-run Node.js processes, you can, let's see here...
 You can reload Nginx with Cron every minute :smile:
+
+## Options
+
+By default Nginx Agent starts with following options:
+
+```js
+{
+  "port": 7390,
+  "ip": "127.0.0.1",
+  "password": null // no password required
+}
+```
+
+It is advised that you create `nginx-agent.json` in working directory
+and specify required parameters there.
 
 ## SSL support coming soon
 
