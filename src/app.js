@@ -4,7 +4,8 @@ var express = require('express')
   , fs = require('fs-extra')
   , path = require('path')
   , mime = require('mime')
-  , NginxConf = require('nginx-conf');
+  , spawn = require('child_process').spawn
+  , NginxConf = require('nginx-json');
 
 module.exports = exports = function(options) {
   options = options || {};
@@ -13,7 +14,6 @@ module.exports = exports = function(options) {
     , root = options.root || process.cwd();
 
   app.use(require('body-parser').json());
-  app.use(require('body-parser').text());
 
   // Basic tenants mgmt
 
@@ -66,7 +66,8 @@ module.exports = exports = function(options) {
   });
 
   app.post('/tenants/:id/*', function(req, res, next) {
-    fs.outputFile(res.locals.file, req.body, 'utf-8', function(err) {
+    req.pipe(fs.createWriteStream(res.locals.file));
+    req.on('end', function(err) {
       /* istanbul ignore if */
       if (err) return next(err);
       res.sendStatus(200);
@@ -80,5 +81,26 @@ module.exports = exports = function(options) {
       res.sendStatus(200);
     });
   });
+
+  // Nginx reload
+
+  app.post('/reload', function(req, res, next) {
+    var p = spawn('nginx', ['-s', 'reload'])
+      , buf = '';
+    p.stdout.on('data', function(data) {
+      buf += data + '\n';
+    });
+    p.stderr.on('data', function(data) {
+      buf += data + '\n';
+    });
+    p.on('close', function(code) {
+      if (code > 0)
+        res.status(500);
+      res.type('text');
+      res.end(buf);
+    });
+  });
+
+  return app;
 
 };
