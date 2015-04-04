@@ -18,6 +18,19 @@ module.exports = exports = function(options) {
   if (process.env.NODE_ENV != 'production')
     app.use(require('morgan')('dev'));
 
+ // Basic auth
+
+  if (options.password)
+    app.use(function(req, res, next) {
+      var credentials = require('basic-auth')(req);
+      if (!credentials || credentials.pass != options.password) {
+        res.status(401);
+        res.set('WWW-Authenticate', 'Basic');
+        return res.end();
+      }
+      next();
+    });
+
   // Nginx reload
 
   app.post('/reload', function(req, res, next) {
@@ -36,19 +49,6 @@ module.exports = exports = function(options) {
       res.end(buf);
     });
   });
-
-  // Basic auth
-
-  if (options.password)
-    app.use(function(req, res, next) {
-      var credentials = require('basic-auth')(req);
-      if (!credentials || credentials.pass != options.password) {
-        res.status(401);
-        res.set('WWW-Authenticate', 'Basic');
-        return res.end();
-      }
-      next();
-    });
 
   // Basic tenants mgmt
 
