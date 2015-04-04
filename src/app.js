@@ -18,6 +18,25 @@ module.exports = exports = function(options) {
   if (process.env.NODE_ENV != 'production')
     app.use(require('morgan')('dev'));
 
+  // Nginx reload
+
+  app.post('/reload', function(req, res, next) {
+    var p = spawn('nginx', ['-s', 'reload'])
+      , buf = '';
+    p.stdout.on('data', function(data) {
+      buf += data + '\n';
+    });
+    p.stderr.on('data', function(data) {
+      buf += data + '\n';
+    });
+    p.on('close', function(code) {
+      if (code > 0)
+        res.status(500);
+      res.type('text');
+      res.end(buf);
+    });
+  });
+
   // Basic auth
 
   if (options.password)
@@ -71,25 +90,6 @@ module.exports = exports = function(options) {
       /* istanbul ignore if */
       if (err) return next(err);
       res.sendStatus(200);
-    });
-  });
-
-  // Nginx reload
-
-  app.post('/reload', function(req, res, next) {
-    var p = spawn('nginx', ['-s', 'reload'])
-      , buf = '';
-    p.stdout.on('data', function(data) {
-      buf += data + '\n';
-    });
-    p.stderr.on('data', function(data) {
-      buf += data + '\n';
-    });
-    p.on('close', function(code) {
-      if (code > 0)
-        res.status(500);
-      res.type('text');
-      res.end(buf);
     });
   });
 
