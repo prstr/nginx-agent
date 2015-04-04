@@ -33,14 +33,18 @@ module.exports = exports = function(options) {
 
   // Basic tenants mgmt
 
-  app.get('/tenants', function(req, res, next) {
-    fs.readdir(path.join(root, 'tenants'), function(err, dirs) {
-      res.json(dirs || []);
+  app.get('/', function(req, res, next) {
+    fs.readdir(root, function(err, confs) {
+      if (!confs)
+        return res.json([]);
+      res.json(confs.filter(function(file) {
+        return file.indexOf('.conf' == file.length - 5);
+      }));
     });
   });
 
-  app.get('/tenants/:id', function(req, res, next) {
-    var file = path.join(root, 'tenants', req.params.id + '.conf');
+  app.get('/:id', function(req, res, next) {
+    var file = path.join(root, req.params.id + '.conf');
     fs.readFile(file, 'utf-8', function(err, text) {
       /* istanbul ignore if */
       if (err) return res.sendStatus(404);
@@ -49,20 +53,20 @@ module.exports = exports = function(options) {
     })
   });
 
-  app.post('/tenants/:id', function(req, res, next) {
-    var file = path.join(root, 'tenants', req.params.id + '.conf');
+  app.post('/:id', function(req, res, next) {
+    var file = path.join(root, req.params.id + '.conf');
     var conf = req.is('json') ?
       new NginxConf(req.body).toString() :
       req.body;
-    fs.outputFile(file, conf.toString(), 'utf-8', function(err) {
+    fs.outputFile(file, conf, 'utf-8', function(err) {
       /* istanbul ignore if */
       if (err) return next(err);
       res.sendStatus(200);
     });
   });
 
-  app.delete('/tenants/:id', function(req, res, next) {
-    var file = path.join(root, 'tenants', req.params.id + '.conf');
+  app.delete('/:id', function(req, res, next) {
+    var file = path.join(root, req.params.id + '.conf');
     fs.remove(file, function(err) {
       /* istanbul ignore if */
       if (err) return next(err);

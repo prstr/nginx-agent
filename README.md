@@ -32,28 +32,28 @@ be run with `sudo`.
 4. Hook up tenants configuration into your main `nginx.conf`:
 
    ```
-   include myapp/tenants/*.conf;
+   include myapp/*.conf;
    ```
 
 Tenants configurations submitted via API will be stored in
-`<root>/tenants/<tenantId>.conf`.
+`<root>/<tenantId>.conf`.
 
 ## REST API
 
-### GET /tenants
+### GET /
 
 List all known tenants.
 
-### POST /tenants/:id
+### POST /:id
 
 Creates a tenant with specified `id`. Accepts JSON body which is converted
 into Nginx configuration via [nginx-json](https://github.com/prstr/nginx-json).
 
-### GET /tenants/:id
+### GET /:id
 
 Returns Nginx configuration for specified tenant.
 
-### DELETE /tenants/:id
+### DELETE /:id
 
 Deletes tenant configuration.
 
