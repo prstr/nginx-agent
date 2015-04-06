@@ -2,7 +2,8 @@
 
 var os = require('os')
   , path = require('path')
-  , async = requre('async')
+  , spawn = require('child_process').spawn
+  , async = require('async')
   , glob = require('glob')
   , fs = require('fs-extra');
 
@@ -24,7 +25,7 @@ exports.reload = function(cb) {
 };
 
 exports.update = function(root, actions, cb) {
-  var tmpDir = path.join(os.tmpDir, Math.random().toString(36));
+  var tmpDir = path.join(os.tmpDir(), Math.random().toString(36));
   var queries = [];
   queries.push(function(cb) {
     copyConfs(root, tmpDir, cb);

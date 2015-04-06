@@ -15,7 +15,8 @@
     "mime": "*",
     "fs-extra": "*",
     "basic-auth": "*",
-    "glob": "*"
+    "glob": "*",
+    "async": "*"
   },
   "repository": {
     "type": "git",
