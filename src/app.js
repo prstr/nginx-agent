@@ -3,7 +3,8 @@
 var express = require('express')
   , fs = require('fs-extra')
   , path = require('path')
-  , spawn = require('child_process').spawn
+  , api = require('./api')
+  , glob = require('glob')
   , NginxConf = require('nginx-json');
 
 module.exports = exports = function(options) {
@@ -31,25 +32,6 @@ module.exports = exports = function(options) {
       next();
     });
 
-  // Nginx reload
-
-  app.post('/reload', function(req, res, next) {
-    var p = spawn('nginx', ['-s', 'reload'])
-      , buf = '';
-    p.stdout.on('data', function(data) {
-      buf += data + '\n';
-    });
-    p.stderr.on('data', function(data) {
-      buf += data + '\n';
-    });
-    p.on('close', function(code) {
-      if (code > 0)
-        res.status(500);
-      res.type('text');
-      res.end(buf);
-    });
-  });
-
   // Basic tenants mgmt
 
   app.get('/', function(req, res, next) {
@@ -73,11 +55,13 @@ module.exports = exports = function(options) {
   });
 
   app.post('/:id', function(req, res, next) {
-    var file = path.join(root, req.params.id + '.conf');
-    var conf = req.is('json') ?
-      new NginxConf(req.body).toString() :
-      req.body;
-    fs.outputFile(file, conf, 'utf-8', function(err) {
+    api.update(root, function(cb) {
+      var file = path.join(root, req.params.id + '.conf');
+      var conf = req.is('json') ?
+        new NginxConf(req.body).toString() :
+        req.body;
+      fs.outputFile(file, conf, 'utf-8', cb);
+    }, function(err) {
       /* istanbul ignore if */
       if (err) return next(err);
       res.sendStatus(200);
@@ -85,8 +69,10 @@ module.exports = exports = function(options) {
   });
 
   app.delete('/:id', function(req, res, next) {
-    var file = path.join(root, req.params.id + '.conf');
-    fs.remove(file, function(err) {
+    api.update(root, function(cb) {
+      var file = path.join(root, req.params.id + '.conf');
+      fs.remove(file, cb);
+    }, function(err) {
       /* istanbul ignore if */
       if (err) return next(err);
       res.sendStatus(200);

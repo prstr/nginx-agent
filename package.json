@@ -14,7 +14,8 @@
     "extend": "*",
     "mime": "*",
     "fs-extra": "*",
-    "basic-auth": "*"
+    "basic-auth": "*",
+    "glob": "*"
   },
   "repository": {
     "type": "git",

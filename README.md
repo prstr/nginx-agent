@@ -46,7 +46,7 @@ List all known tenants.
 
 ### POST /:id
 
-Creates a tenant with specified `id`. Accepts JSON body which is converted
+Creates or updates tenant with specified `id`. Accepts JSON body which is converted
 into Nginx configuration via [nginx-json](https://github.com/prstr/nginx-json).
 
 ### GET /:id
@@ -56,14 +56,6 @@ Returns Nginx configuration for specified tenant.
 ### DELETE /:id
 
 Deletes tenant configuration.
-
-### POST /reload
-
-Issues `nginx reload` command and returns its result.
-
-Note: Nginx Agent must be run under `sudo` in order for this to work.
-If you'd rather not to sudo-run Node.js processes, you can, let's see here...
-You can reload Nginx with Cron every minute :smile:
 
 ## Options
 
