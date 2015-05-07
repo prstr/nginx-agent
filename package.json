@@ -18,6 +18,14 @@
     "glob": "*",
     "async": "*"
   },
+  "devDependencies": {
+    "eslint": "*",
+    "pre-commit": "*"
+  },
+  "scripts": {
+    "pretest": "eslint ."
+  },
+  "pre-commit": [ "test" ],
   "repository": {
     "type": "git",
     "url": "https://github.com/prstr/nginx-agent.git"
