@@ -10,7 +10,6 @@
     "express": "4.x.x",
     "morgan": "*",
     "body-parser": "*",
-    "nginx-json": "*",
     "extend": "*",
     "mime": "*",
     "fs-extra": "*",

@@ -3,8 +3,7 @@
 var express = require('express')
   , fs = require('fs-extra')
   , path = require('path')
-  , nginx = require('./nginx')
-  , NginxConf = require('nginx-json');
+  , nginx = require('./nginx');
 
 module.exports = exports = function (options) {
   options = options || {};
@@ -55,10 +54,7 @@ module.exports = exports = function (options) {
   app.post('/:id', function (req, res, next) {
     nginx.update(root, function (cb) {
       var file = path.join(root, req.params.id + '.conf');
-      var conf = req.is('json') ?
-        new NginxConf(req.body).toString() :
-        req.body;
-      fs.outputFile(file, conf, 'utf-8', cb);
+      fs.outputFile(file, req.body, 'utf-8', cb);
     }, function (err) {
       if (err) return next(err);
       res.sendStatus(200);

@@ -46,8 +46,8 @@ List all known tenants.
 
 ### POST /:id
 
-Creates or updates tenant with specified `id`. Accepts JSON body which is converted
-into Nginx configuration via [nginx-json](https://github.com/prstr/nginx-json).
+Creates or updates tenant with specified `id`. Accepts JSON body with Nginx
+configuration as plain text.
 
 ### GET /:id
 
