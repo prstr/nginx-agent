@@ -14,7 +14,7 @@ var options = {
 
 var userOptionsFile = path.join(process.cwd(), 'nginx-agent.json');
 
-extend(options, fs.readJsonFileSync(userOptionsFile, 'utf-8'));
+extend(options, fs.readJsonSync(userOptionsFile, 'utf-8'));
 
 var app = require('../src/app')(options);
 
